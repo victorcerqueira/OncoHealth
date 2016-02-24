@@ -96,7 +96,6 @@ public class HealthTipDataSource {
     private HealthTip addHealthTip(JSONObject ht){
         HealthTip healthTip = new HealthTip();
         try {
-            Log.d("OncoHealth", "Adding id - " + ht.getString("id"));
             healthTip.setId(ht.getLong("id"));
             healthTip.setName(ht.getString("name"));
             healthTip.setShortText(ht.getString("shortText"));
@@ -143,7 +142,7 @@ public class HealthTipDataSource {
     public List<HealthTip> getAllHealthTips(){
         List<HealthTip> healthTips = new ArrayList<>();
         Cursor cursor = database.query(SQLiteHealthTipsHelper.TABLE,allColumns,
-                null,null,null,null,null);
+                null,null,null,SQLiteHealthTipsHelper.COLUMN_ID + " DESC",null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -153,6 +152,34 @@ public class HealthTipDataSource {
             cursor.moveToNext();
         }
         cursor.close();
+
+        return healthTips;
+    }
+
+    /**
+     * Retrieves a {@link List} of {@link HealthTip}s with the n most recent
+     * healthTips on the database (assuming id as ordering factor).
+     * Should only be called after a successful {@link HealthTipDataSource#open()} call.
+     * @param n number of health tips to retrieve
+     * @return List of HealthTips with n elements or {@code null} if there are less
+     * than n tips available
+     */
+    public List<HealthTip> getNHealthTips(int n){
+        List<HealthTip> healthTips = new ArrayList<>();
+        Cursor cursor = database.query(SQLiteHealthTipsHelper.TABLE,allColumns,
+                null,null,null,null,SQLiteHealthTipsHelper.COLUMN_ID + " DESC");
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast() && n>0) {
+            HealthTip ht = cursorToHealthTip(cursor);
+            if(ht != null)
+                healthTips.add(ht);
+            cursor.moveToNext();
+            n--;
+        }
+        cursor.close();
+
+        if(n>0) return null;
 
         return healthTips;
     }

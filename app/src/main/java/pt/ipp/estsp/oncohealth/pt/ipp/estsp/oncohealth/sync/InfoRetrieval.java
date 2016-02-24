@@ -18,19 +18,27 @@ public class InfoRetrieval extends AsyncTask<Context, Void, List<HealthTip>> {
 
     @Override
     protected List<HealthTip> doInBackground(Context... params) {
+        int numTips = 5;
+
         HealthTipDataSource dataSource = new HealthTipDataSource(params[0]);
 
         try {
             dataSource.open();
             dataSource.populateDatabase();
+
+            List<HealthTip> tips = dataSource.getNHealthTips(numTips);
+
             dataSource.close();
+
+            if(tips != null)
+                return tips;
+
         } catch (IOException e) {
             Log.d("OncoHealth", "Something went wrong - IOException");
         } catch (SQLException e2){
             Log.d("OncoHealth","Something went wrong - SQLException");
         }
-        List<HealthTip> tips = dataSource.getAllHealthTips();
-        Log.d("OncoHealth" , "Retrieved " + tips.size() + "tips.");
-        return tips;
+
+        return null;
     }
 }
