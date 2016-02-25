@@ -55,7 +55,7 @@ public class ServerConnection {
         }
 
         try {
-            return new JSONObject(total.toString());
+            return new JSONObject(new String(total.toString().getBytes("ISO-8859-1")));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

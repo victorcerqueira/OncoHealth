@@ -18,7 +18,7 @@ public class InfoRetrieval extends AsyncTask<Context, Void, List<HealthTip>> {
 
     @Override
     protected List<HealthTip> doInBackground(Context... params) {
-        int numTips = 5;
+        int numTips = 4;
 
         HealthTipDataSource dataSource = new HealthTipDataSource(params[0]);
 

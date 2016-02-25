@@ -11,5 +11,16 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="pt.ipp.estsp.oncohealth.LandingPage"
     tools:showIn="@layout/activity_landing_page">
+    
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tips_gridview"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="10dp">
+    </GridView>
 
 </RelativeLayout>

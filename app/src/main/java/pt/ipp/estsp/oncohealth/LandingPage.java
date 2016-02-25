@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.GridView;
 
 import java.util.List;
 
+import pt.ipp.estsp.oncohealth.UI.HealthTipAdapter;
 import pt.ipp.estsp.oncohealth.UI.ServerUnavailableDialogFragment;
 import pt.ipp.estsp.oncohealth.database.HealthTip;
 import pt.ipp.estsp.oncohealth.pt.ipp.estsp.oncohealth.sync.InfoRetrieval;
@@ -29,7 +31,8 @@ public class LandingPage extends AppCompatActivity {
                 dialog.show(getSupportFragmentManager(), "NoticeDialogFragment");
             }
             else{
-                //TODO display tips on screen
+                GridView gv = (GridView) findViewById(R.id.tips_gridview);
+                gv.setAdapter(new HealthTipAdapter(this, tips));
             }
         } catch (Exception e) {
             e.printStackTrace();

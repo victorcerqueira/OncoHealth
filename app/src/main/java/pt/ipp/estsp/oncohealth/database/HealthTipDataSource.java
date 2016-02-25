@@ -86,6 +86,7 @@ public class HealthTipDataSource {
 
     /**
      * Receive a JSON object, parse it and add it to the database.
+     * If the id is already on the database, replace the row with new values.
      * If parsing or insertion fails, return {@code null}, if it succeeds
      * returns the corresponding HealthTip object.
      * Should only be called after a successful {@link HealthTipDataSource#open()} call.
@@ -96,7 +97,14 @@ public class HealthTipDataSource {
     private HealthTip addHealthTip(JSONObject ht){
         HealthTip healthTip = new HealthTip();
         try {
-            healthTip.setId(ht.getLong("id"));
+            long id = ht.getLong("id");
+
+            if(getHealthTip(id)!=null) { //if id already in database delete the row
+                String[] args = {id+""};
+                database.delete(SQLiteHealthTipsHelper.TABLE, SQLiteHealthTipsHelper.COLUMN_ID + " = ?", args);
+            }
+
+            healthTip.setId(id);
             healthTip.setName(ht.getString("name"));
             healthTip.setShortText(ht.getString("shortText"));
             healthTip.setFullText(ht.getString("fullText"));
