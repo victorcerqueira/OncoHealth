@@ -1,4 +1,4 @@
-package pt.ipp.estsp.oncohealth.pt.ipp.estsp.oncohealth.sync;
+package pt.ipp.estsp.oncohealth.sync;
 
 import android.content.Context;
 import android.os.AsyncTask;

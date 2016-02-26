@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.ipp.estsp.oncohealth.pt.ipp.estsp.oncohealth.sync.ServerConnection;
+import pt.ipp.estsp.oncohealth.sync.ServerConnection;
 
 /**
  * Class that works like a data access object to the HealthTips database.

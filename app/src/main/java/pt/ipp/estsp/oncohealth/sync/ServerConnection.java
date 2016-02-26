@@ -1,4 +1,4 @@
-package pt.ipp.estsp.oncohealth.pt.ipp.estsp.oncohealth.sync;
+package pt.ipp.estsp.oncohealth.sync;
 
 import org.json.JSONException;
 import org.json.JSONObject;

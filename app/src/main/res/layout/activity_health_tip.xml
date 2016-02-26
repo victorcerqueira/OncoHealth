@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/health_tip_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_not_available"
+            android:layout_gravity="left"
+            android:onClick="finish"
+            />
+
+        <TextView
+            android:id="@+id/health_tip_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="name"
+            />
+
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/health_tip_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_not_available"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/health_tip_short_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="short description"/>
+
+    <TextView
+        android:id="@+id/health_tip_long_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="long description"/>
+
+    <TextView
+        android:id="@+id/health_tip_expand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="Ver mais..."/>
+
+</LinearLayout>

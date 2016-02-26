@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
  * @since 0.1
  */
 
-public class HealthTip {
+public class HealthTip implements java.io.Serializable{
     /** Id of the health tip */
     private long id;
     /** Name of the health tip. Shouldn't be longer that 3/4 words */
