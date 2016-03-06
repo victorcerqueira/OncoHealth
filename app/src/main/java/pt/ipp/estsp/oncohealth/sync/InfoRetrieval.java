@@ -3,24 +3,26 @@ package pt.ipp.estsp.oncohealth.sync;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.util.Pair;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 import pt.ipp.estsp.oncohealth.database.HealthTip;
-import pt.ipp.estsp.oncohealth.database.HealthTipDataSource;
+import pt.ipp.estsp.oncohealth.database.DataSource;
+import pt.ipp.estsp.oncohealth.database.Routine;
 
 /**
  * Created by Victor on 23/02/2016.
  */
-public class InfoRetrieval extends AsyncTask<Context, Void, List<HealthTip>> {
+public class InfoRetrieval extends AsyncTask<Context, Void, Pair<List<HealthTip>,Routine>> {
 
     @Override
-    protected List<HealthTip> doInBackground(Context... params) {
+    protected Pair<List<HealthTip>,Routine> doInBackground(Context... params) {
         int numTips = 4;
 
-        HealthTipDataSource dataSource = new HealthTipDataSource(params[0]);
+        DataSource dataSource = new DataSource(params[0]);
 
         try {
             dataSource.open();
@@ -28,10 +30,11 @@ public class InfoRetrieval extends AsyncTask<Context, Void, List<HealthTip>> {
 
             List<HealthTip> tips = dataSource.getNHealthTips(numTips);
 
+            Routine routine = dataSource.getLastRoutine();
+
             dataSource.close();
 
-            if(tips != null)
-                return tips;
+            return new Pair<List<HealthTip>,Routine>(tips,routine);
 
         } catch (IOException e) {
             Log.d("OncoHealth", "Something went wrong - IOException");

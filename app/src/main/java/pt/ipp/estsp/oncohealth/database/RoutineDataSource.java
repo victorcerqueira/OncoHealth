@@ -19,34 +19,35 @@ import pt.ipp.estsp.oncohealth.sync.ServerConnection;
 
 /**
  * Class that works like a data access object to the HealthTips database.
- * After instantiated, should call {@link HealthTipDataSource#open()} before any other calls.
- * Should call {@link HealthTipDataSource#close()} once not needed anymore.
+ * After instantiated, should call {@link RoutineDataSource#open()} before any other calls.
+ * Should call {@link RoutineDataSource#close()} once not needed anymore.
  * Also works like an interface to the ServerConnection, handling any server communication errors.
  * @author Victor
  * @version 0.1
- * @see SQLiteHealthTipsHelper
+ * @see SQLiteHelper
  * @see ServerConnection
  * @since 0.1
  */
-public class HealthTipDataSource {
+public class RoutineDataSource {
     private SQLiteDatabase database;
-    private SQLiteHealthTipsHelper dbHelper;
+    private SQLiteHelper dbHelper;
     /** List of all columns name */
-    private static String[] allColumns = {SQLiteHealthTipsHelper.COLUMN_ID,
-            SQLiteHealthTipsHelper.COLUMN_NAME,SQLiteHealthTipsHelper.COLUMN_SHORT_TEXT,
-            SQLiteHealthTipsHelper.COLUMN_FULL_TEXT,SQLiteHealthTipsHelper.COLUMN_IMAGE};
+    private static String[] allColumns = {SQLiteHelper.ROUTINE_COLUMN_ID,
+            SQLiteHelper.ROUTINE_COLUMN_INTERVAL,SQLiteHelper.ROUTINE_COLUMN_REPETITIONS,
+            SQLiteHelper.ROUTINE_COLUMN_IMAGE,SQLiteHelper.ROUTINE_COLUMN_DESCRIPTION,
+            SQLiteHelper.ROUTINE_COLUMN_IS_DONE};
 
     /**
      * Constructor
      */
-    public HealthTipDataSource(Context context){
-        dbHelper = new SQLiteHealthTipsHelper(context);
+    public RoutineDataSource(Context context){
+        dbHelper = new SQLiteHelper(context);
     }
 
     /**
      * Opens the connection to the database. If the call fails will throw
      * a SQLException. Once called should be followed by corresponding
-     * {@link HealthTipDataSource#close()} call.
+     * {@link RoutineDataSource#close()} call.
      * @throws SQLException
      */
     public void open() throws SQLException{
@@ -55,7 +56,7 @@ public class HealthTipDataSource {
 
     /**
      * Closes the connection to the database. Should be called after a
-     * successful {@link HealthTipDataSource#open()} call.
+     * successful {@link RoutineDataSource#open()} call.
      */
     public void close() {
         dbHelper.close();
@@ -66,7 +67,7 @@ public class HealthTipDataSource {
      * fails throws an IOException.
      * When retrieving the JSON, tries to add corresponding health tip to the database.
      * If the insertion fails just continue to the new one. The health tips should be
-     * retrieved after this call using {@link HealthTipDataSource#getAllHealthTips()}.
+     * retrieved after this call using {@link RoutineDataSource#getAllHealthTips()}.
      * @throws IOException
      */
     public void populateDatabase() throws IOException {
@@ -88,7 +89,7 @@ public class HealthTipDataSource {
      * If the id is already on the database, replace the row with new values.
      * If parsing or insertion fails, return {@code null}, if it succeeds
      * returns the corresponding HealthTip object.
-     * Should only be called after a successful {@link HealthTipDataSource#open()} call.
+     * Should only be called after a successful {@link RoutineDataSource#open()} call.
      * @param ht The JSONObject corresponding to the HealthTip to parse
      * @return HealthTip if successful, {@code null} otherwise
      */
@@ -100,7 +101,7 @@ public class HealthTipDataSource {
 
             if(getHealthTip(id)!=null) { //if id already in database delete the row
                 String[] args = {id+""};
-                database.delete(SQLiteHealthTipsHelper.TABLE, SQLiteHealthTipsHelper.COLUMN_ID + " = ?", args);
+                database.delete(SQLiteHelper.HEALTH_TIP_TABLE, SQLiteHelper.HEALTH_TIP_COLUMN_ID + " = ?", args);
             }
 
             healthTip.setId(id);
@@ -110,13 +111,13 @@ public class HealthTipDataSource {
             //TODO handle image
 
             ContentValues values = new ContentValues();
-            values.put(SQLiteHealthTipsHelper.COLUMN_ID,healthTip.getId());
-            values.put(SQLiteHealthTipsHelper.COLUMN_NAME,healthTip.getName());
-            values.put(SQLiteHealthTipsHelper.COLUMN_SHORT_TEXT,healthTip.getShortText());
-            values.put(SQLiteHealthTipsHelper.COLUMN_FULL_TEXT,healthTip.getFullText());
+            values.put(SQLiteHelper.HEALTH_TIP_COLUMN_ID,healthTip.getId());
+            values.put(SQLiteHelper.HEALTH_TIP_COLUMN_NAME,healthTip.getName());
+            values.put(SQLiteHelper.HEALTH_TIP_COLUMN_SHORT_TEXT,healthTip.getShortText());
+            values.put(SQLiteHelper.HEALTH_TIP_COLUMN_FULL_TEXT,healthTip.getFullText());
             //TODO handle image
 
-            if(database.insert(SQLiteHealthTipsHelper.TABLE, null, values)<0)
+            if(database.insert(SQLiteHelper.HEALTH_TIP_TABLE, null, values)<0)
                 return null;
 
             return healthTip;
@@ -129,13 +130,13 @@ public class HealthTipDataSource {
 
     /**
      * Retrieves the Health Tip with the given id from the database and returns it.
-     * Should only be called after a successful {@link HealthTipDataSource#open()} call.
+     * Should only be called after a successful {@link RoutineDataSource#open()} call.
      * @param id ID of the HealthTip to retrieve
      * @return HealthTip if successful, {@code null} if doesn't exist;
      */
     public HealthTip getHealthTip(long id){
-        Cursor cursor = database.query(SQLiteHealthTipsHelper.TABLE,allColumns,
-                SQLiteHealthTipsHelper.COLUMN_ID +"="+id,null,null,null,null);
+        Cursor cursor = database.query(SQLiteHelper.HEALTH_TIP_TABLE,allColumns,
+                SQLiteHelper.HEALTH_TIP_COLUMN_ID +"="+id,null,null,null,null);
 
         if(!cursor.moveToFirst()) return null;
         return cursorToHealthTip(cursor);
@@ -143,13 +144,13 @@ public class HealthTipDataSource {
 
     /**
      * Retrieves a {@link List} of {@link HealthTip}s with all the healthTips on the database.
-     * Should only be called after a successful {@link HealthTipDataSource#open()} call.
+     * Should only be called after a successful {@link RoutineDataSource#open()} call.
      * @return List of HealthTips
      */
     public List<HealthTip> getAllHealthTips(){
         List<HealthTip> healthTips = new ArrayList<>();
-        Cursor cursor = database.query(SQLiteHealthTipsHelper.TABLE,allColumns,
-                null,null,null,SQLiteHealthTipsHelper.COLUMN_ID + " DESC",null);
+        Cursor cursor = database.query(SQLiteHelper.HEALTH_TIP_TABLE,allColumns,
+                null,null,null, SQLiteHelper.HEALTH_TIP_COLUMN_ID + " DESC",null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -166,15 +167,15 @@ public class HealthTipDataSource {
     /**
      * Retrieves a {@link List} of {@link HealthTip}s with the n most recent
      * healthTips on the database (assuming id as ordering factor).
-     * Should only be called after a successful {@link HealthTipDataSource#open()} call.
+     * Should only be called after a successful {@link RoutineDataSource#open()} call.
      * @param n number of health tips to retrieve
      * @return List of HealthTips with n elements or {@code null} if there are less
      * than n tips available
      */
     public List<HealthTip> getNHealthTips(int n){
         List<HealthTip> healthTips = new ArrayList<>();
-        Cursor cursor = database.query(SQLiteHealthTipsHelper.TABLE,allColumns,
-                null,null,null,null,SQLiteHealthTipsHelper.COLUMN_ID + " DESC");
+        Cursor cursor = database.query(SQLiteHelper.HEALTH_TIP_TABLE,allColumns,
+                null,null,null,null, SQLiteHelper.HEALTH_TIP_COLUMN_ID + " DESC");
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast() && n>0) {
